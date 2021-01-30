@@ -1,10 +1,12 @@
 package api;
 
 import api.model.BattleParams;
+import api.model.Game;
 import api.model.Map;
 import api.model.Tank;
 import business.game.GameSession;
 import com.google.gson.Gson;
+import data.dao.GameDao;
 import data.dao.MapDao;
 import data.dao.TankDao;
 import io.swagger.annotations.Api;
@@ -58,7 +60,9 @@ public class BattleResourceV1 {
     @ApiOperation(value = "Returns a score from the DB for a given gameId.", response = String.class)
     public Response getScore(@PathParam("game_id") String gameId) {
         Gson gson = new Gson();
-        return Response.ok().entity(gson.toJson("Your score: " + gameId)).build();
+        GameDao gameDao = new GameDao();
+        Game game = gameDao.getGameForId(gameId);
+        return Response.ok().entity(gson.toJson(game.getScore())).build();
     }
 
 }

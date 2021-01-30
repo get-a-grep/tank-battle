@@ -173,36 +173,16 @@
         "name" : {
           "type" : "string"
         },
-        "treadLeft" : {
+        "tread" : {
           "type" : "string",
           "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
         },
-        "treadRight" : {
-          "type" : "string",
-          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
-        },
-        "armourForward" : {
-          "type" : "string",
-          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
-        },
-        "armourBack" : {
-          "type" : "string",
-          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
-        },
-        "armourLeft" : {
-          "type" : "string",
-          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
-        },
-        "armourRight" : {
-          "type" : "string",
-          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        "health" : {
+          "type" : "integer",
+          "format" : "int32"
         },
         "position" : {
           "$ref" : "#/definitions/Position"
-        },
-        "turret" : {
-          "type" : "string",
-          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
         }
       }
     }

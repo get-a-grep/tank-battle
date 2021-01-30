@@ -1,7 +1,9 @@
 package business.game;
 
 import api.model.BattleParams;
+import api.model.Score;
 import business.map.MapInstance;
+import data.dao.GameDao;
 import data.dao.TankDao;
 import org.apache.log4j.Logger;
 
@@ -17,12 +19,24 @@ public class GameSession {
     private TankAi tank2;
 
     public String playSession(BattleParams battleParams) {
+        //Setup for game
         setupSession(battleParams);
+
+        //Play game
         while (tank1.getCurHealth() > 0 && tank2.getCurHealth() > 0) {
             doTurn();
         }
-        //TODO
-        return "game_id";
+
+        //Set score
+        Score score = new Score();
+        score.setTank1Points(5 - tank2.getCurHealth());
+        score.setTank2Points(5 - tank1.getCurHealth());
+
+        //Store game
+        GameDao gameDao = new GameDao();
+        String gameId = gameDao.storeGameSession(battleParams, score);
+
+        return gameId;
     }
 
     private void setupSession(BattleParams battleParams) {
