@@ -1,0 +1,31 @@
+version: '3'
+services:
+  backend:
+    build: app/
+    image: tb-app
+    container_name: tb-be
+    ports:
+      - '8080:8080'
+      - '4848:4848'
+    links:
+      - "db:database"
+    environment:
+      MONGO_USER: app-user
+      MONGO_PWD: 541259
+      MONGO_PORT: 27017
+      MONGO_HOST: database
+  db:
+    image: mongo:latest
+    container_name: tb-db
+    ports:
+      - '27017-27019:27017-27019'
+    volumes:
+      - ./db/src/main/resources/1_init-mongo.js:/docker-entrypoint-initdb.d/1_init-mongo.js:ro
+      - ./db/src/main/resources/2_create-collections.js:/docker-entrypoint-initdb.d/2_create-collections.js:ro
+      - ./db/src/main/resources/3_add-tanks.js:/docker-entrypoint-initdb.d/3_add-tanks.js:ro
+      - ./db/src/main/resources/4_add-maps.js:/docker-entrypoint-initdb.d/4_add-maps.js:ro
+      - ./db/data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: tb-test
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret

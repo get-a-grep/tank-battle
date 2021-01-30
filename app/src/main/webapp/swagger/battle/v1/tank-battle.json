@@ -1,0 +1,210 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The Tank Battle API for accessing game information and simulating games",
+    "version" : "1.0.0",
+    "title" : "Tank Battle API v1.0.0",
+    "contact" : {
+      "name" : "Sean Mades",
+      "email" : "seanmades@gmail.com"
+    },
+    "license" : {
+      "name" : "GPL-3.0",
+      "url" : "http://www.gnu.org/licenses/gpl-3.0.txt"
+    }
+  },
+  "basePath" : "/app/api",
+  "tags" : [ {
+    "name" : "Battle API V1"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/v1/map/{map_id}" : {
+      "get" : {
+        "tags" : [ "Battle API V1" ],
+        "summary" : "Returns map-json from DB for a given mapId.",
+        "description" : "",
+        "operationId" : "getMap",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "map_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Map"
+            }
+          }
+        }
+      }
+    },
+    "/v1/score/{game_id}" : {
+      "get" : {
+        "tags" : [ "Battle API V1" ],
+        "summary" : "Returns a score from the DB for a given gameId.",
+        "description" : "",
+        "operationId" : "getScore",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "game_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/v1/simulate" : {
+      "post" : {
+        "tags" : [ "Battle API V1" ],
+        "summary" : "Simulates a battle and returns a game_id for use in score IF.",
+        "description" : "",
+        "operationId" : "simulateBattle",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/v1/tanks/{tank_id}" : {
+      "get" : {
+        "tags" : [ "Battle API V1" ],
+        "summary" : "Returns tank-json from DB for a given tankId.",
+        "description" : "",
+        "operationId" : "getTank",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "tank_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Tank"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Map" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "startPointA" : {
+          "$ref" : "#/definitions/Position"
+        },
+        "startPointB" : {
+          "$ref" : "#/definitions/Position"
+        },
+        "fieldX" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "fieldY" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "obstacles" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Obstacle"
+          }
+        }
+      }
+    },
+    "Obstacle" : {
+      "type" : "object",
+      "properties" : {
+        "blocksMove" : {
+          "type" : "boolean"
+        },
+        "damage" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "position" : {
+          "$ref" : "#/definitions/Position"
+        }
+      }
+    },
+    "Position" : {
+      "type" : "object",
+      "properties" : {
+        "x" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "y" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "Tank" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "treadLeft" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        },
+        "treadRight" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        },
+        "armourForward" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        },
+        "armourBack" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        },
+        "armourLeft" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        },
+        "armourRight" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        },
+        "position" : {
+          "$ref" : "#/definitions/Position"
+        },
+        "turret" : {
+          "type" : "string",
+          "enum" : [ "STABLE", "LOW", "MODERATE", "SEVERE" ]
+        }
+      }
+    }
+  }
+}
