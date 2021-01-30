@@ -23,10 +23,10 @@ public class MapDao {
         BasicDBObject query = new BasicDBObject();
         query.put("id", id);
         DBObject mapObj = mapCollection.findOne();
-        LOGGER.info("Returning following map for id: " + mapObj.toString());
 
         if(mapObj != null) {
             Map map = DBObjConverter.mapFromDbObj(mapObj);
+            LOGGER.info("Returning following map for id: " + mapObj.toString());
             return map;
         } else {
             return null;

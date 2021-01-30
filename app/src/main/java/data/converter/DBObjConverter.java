@@ -73,6 +73,36 @@ public class DBObjConverter {
         return map;
     }
 
+    public static Game gameFromDbObj(final DBObject dbObject) {
+        //Read fields into HashMap for parsing
+        Set<String> allKeys = dbObject.keySet();
+        HashMap<String, String> fields = new HashMap();
+        for (String key: allKeys) {
+            fields.put(key, dbObject.get(key).toString());
+        }
+
+        Game game = new Game();
+        game.setId(fields.get("_id"));
+
+        try {
+            BattleParams params =new BattleParams();
+            ObjectMapper mapper = new ObjectMapper();
+
+            ArrayList<String> tankIds = mapper.readValue(fields.get("tankIds"), ArrayList.class);
+            params.setTankIds(tankIds);
+            params.setMapId(fields.get("mapId"));
+
+            Score score = mapper.readValue(fields.get("score"), Score.class);
+
+            game.setBattleParams(params);
+            game.setScore(score);
+        } catch (IOException ioe) {
+            LOGGER.warn("Could not deserialize game db-object.", ioe);
+        }
+
+        return game;
+    }
+
     private static Damage parseDamage(final String dmgStr) {
         if (dmgStr == Damage.STABLE.toString()) {
             return Damage.STABLE;
