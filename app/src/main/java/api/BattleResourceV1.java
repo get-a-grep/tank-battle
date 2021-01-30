@@ -11,6 +11,7 @@ import data.dao.MapDao;
 import data.dao.TankDao;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -46,8 +47,10 @@ public class BattleResourceV1 {
     @Path("/simulate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Simulates a battle and returns a game_id for use in score IF.", response = String.class)
-    public Response simulateBattle(BattleParams params) {
+    @ApiOperation(value = "Simulates a battle and returns a game_id for use in score IF.",
+            response = String.class)
+    public Response simulateBattle(
+            @ApiParam(value = "The parameters of the battle", required = true) BattleParams params) {
         Gson gson = new Gson();
         GameSession gameSession = new GameSession();
         String gameId = gameSession.playSession(params);
@@ -57,7 +60,8 @@ public class BattleResourceV1 {
     @GET
     @Path("/score/{game_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Returns a score from the DB for a given gameId.", response = String.class)
+    @ApiOperation(value = "Returns a score from the DB for a given gameId.",
+            response = String.class)
     public Response getScore(@PathParam("game_id") String gameId) {
         Gson gson = new Gson();
         GameDao gameDao = new GameDao();
