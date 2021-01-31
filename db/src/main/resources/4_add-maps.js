@@ -1,6 +1,6 @@
 var dbo = db.getSiblingDB('tb-test');
 dbo.maps.insertOne({
-  id : 1,
+  id : "1",
   fieldX : 100,
   fieldY : 80,
   startPointA : {

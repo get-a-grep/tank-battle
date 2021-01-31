@@ -22,11 +22,12 @@ public class TankDao {
 
         BasicDBObject query = new BasicDBObject();
         query.put("id", id);
-        DBObject tankObj = tankCollection.findOne();
-        LOGGER.info("Returning following tank for id: " + tankObj.toString());
+        DBObject tankObj = tankCollection.findOne(query);
+
 
         if(tankObj != null) {
             Tank tank = DBObjConverter.tankFromDbObj(tankObj);
+            LOGGER.info("Returning following tank for id: " + tankObj.toString());
             return tank;
         } else {
             return null;

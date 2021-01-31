@@ -18,12 +18,19 @@ public class TankAi {
     private int curHealth;
     private Position curPos;
     private Direction curDirection;
+    private Direction lastDirection;
 
     public TankAi (Tank tank) {
         this.tankDef = tank;
         curHealth = tank.getHealth();
     }
 
+    /**
+     * Method that decides whether the AI should move, turn, or attack.
+     *
+     * @param map
+     * @param enemyTank
+     */
     public void doAction(MapInstance map, TankAi enemyTank) {
         ArrayList<Obstacle> obstacles = map.getObstacles();
         ArrayList<Direction> blockedDirections = new ArrayList<>();
@@ -64,19 +71,20 @@ public class TankAi {
     }
 
     private boolean isFacingEnemy(Position enemyTank) {
-        boolean enemyOnX = enemyTank.getX() == curPos.getX();
-        boolean enemyOnY = enemyTank.getY() == curPos.getY();
-
         int enemyPosX = enemyTank.getX();
         int enemyPosY = enemyTank.getY();
 
-        if (enemyOnX && curDirection == Direction.UP && enemyPosX > curPos.getX()) {
+        boolean enemyOnX = enemyPosX == curPos.getX();
+        boolean enemyOnY = enemyPosY == curPos.getY();
+
+
+        if (enemyOnX && curDirection == Direction.RIGHT && enemyPosX > curPos.getX()) {
             return true;
-        } else if (enemyOnX && curDirection == Direction.DOWN && enemyPosX < curPos.getX()) {
+        } else if (enemyOnX && curDirection == Direction.LEFT && enemyPosX < curPos.getX()) {
             return true;
-        } else if (enemyOnY && curDirection == Direction.RIGHT && enemyPosY > curPos.getY()) {
+        } else if (enemyOnY && curDirection == Direction.UP && enemyPosY > curPos.getY()) {
             return true;
-        } else if (enemyOnY && curDirection == Direction.LEFT && enemyPosY < curPos.getY()) {
+        } else if (enemyOnY && curDirection == Direction.DOWN && enemyPosY < curPos.getY()) {
             return true;
         } else {
             return false;
@@ -110,16 +118,16 @@ public class TankAi {
 
     private void doTurn(Position enemyPos) {
         if(enemyPos.getX() == curPos.getX()) {
-            if (enemyPos.getX() > curPos.getX()) {
-                curDirection = Direction.RIGHT;
-            } else {
-                curDirection = Direction.LEFT;
-            }
-        } else {
             if (enemyPos.getY() > curPos.getY()) {
                 curDirection = Direction.UP;
             } else {
                 curDirection = Direction.DOWN;
+            }
+        } else {
+            if (enemyPos.getX() > curPos.getX()) {
+                curDirection = Direction.RIGHT;
+            } else {
+                curDirection = Direction.LEFT;
             }
         }
         LOGGER.info(tankDef.getName() + " turned " + curDirection.name());
@@ -129,6 +137,16 @@ public class TankAi {
         int enemyPosX = enemyPos.getX();
         int enemyPosY = enemyPos.getY();
 
+        boolean enemyIsRight = enemyPosX > curPos.getX();
+        boolean enemyIsLeft = enemyPosX < curPos.getX();
+        boolean enemyIsUp = enemyPosY > curPos.getY();
+        boolean enemyIsDown = enemyPosY < curPos.getY();
+
+        boolean lastMoveUp = lastDirection == Direction.UP;
+        boolean lastMoveDown = lastDirection == Direction.DOWN;
+        boolean lastMoveRight = lastDirection == Direction.RIGHT;
+        boolean lastMoveLeft = lastDirection == Direction.LEFT;
+
         int diffPosX = enemyPosX > curPos.getX() ? enemyPosX - curPos.getX() :
                 curPos.getX() - enemyPosX;
         int diffPosY = enemyPosY > curPos.getY() ? enemyPosY - curPos.getY() :
@@ -136,20 +154,52 @@ public class TankAi {
 
         if (blocking.size() == 0) {
             if (diffPosX > diffPosY) {
-                if (enemyPosX > curPos.getX()) {
-                    curPos.setX(curPos.getX() + 1);
-                    curDirection = Direction.UP;
-                } else {
+                if (enemyIsLeft && !lastMoveRight) {
                     curPos.setX(curPos.getX() - 1);
-                    curDirection = Direction.DOWN;
+                    curDirection = Direction.LEFT;
+                } else if (enemyIsLeft && lastMoveRight) {
+                    if (enemyIsUp) {
+                        curPos.setY(curPos.getY() + 1);
+                        curDirection = Direction.UP;
+                    } else {
+                        curPos.setY(curPos.getY() - 1);
+                        curDirection = Direction.DOWN;
+                    }
+                } else if (enemyIsRight && !lastMoveLeft) {
+                    curPos.setX(curPos.getX() + 1);
+                    curDirection = Direction.RIGHT;
+                } else if (enemyIsRight && lastMoveLeft) {
+                    if (enemyIsUp) {
+                        curPos.setY(curPos.getY() + 1);
+                        curDirection = Direction.UP;
+                    } else {
+                        curPos.setY(curPos.getY() - 1);
+                        curDirection = Direction.DOWN;
+                    }
                 }
             } else {
-                if (enemyPosY > curPos.getY()) {
+                if (enemyIsUp && !lastMoveDown) {
                     curPos.setY(curPos.getY() + 1);
-                    curDirection = Direction.RIGHT;
-                } else {
+                    curDirection = Direction.UP;
+                } else if (enemyIsUp && lastMoveDown) {
+                    if (enemyIsRight) {
+                        curPos.setX(curPos.getX() + 1);
+                        curDirection = Direction.RIGHT;
+                    } else {
+                        curPos.setX(curPos.getX() - 1);
+                        curDirection = Direction.LEFT;
+                    }
+                } else if (enemyIsDown && !lastMoveUp) {
                     curPos.setY(curPos.getY() - 1);
-                    curDirection = Direction.LEFT;
+                    curDirection = Direction.DOWN;
+                } else if (enemyIsDown && lastMoveUp) {
+                    if (enemyIsRight) {
+                        curPos.setX(curPos.getX() + 1);
+                        curDirection = Direction.RIGHT;
+                    } else {
+                        curPos.setX(curPos.getX() - 1);
+                        curDirection = Direction.LEFT;
+                    }
                 }
             }
         } else {
@@ -176,63 +226,79 @@ public class TankAi {
             }
 
             if (diffPosX > diffPosY) {
-                if (enemyPosX > curPos.getX()) {
-                    if (!isRightBlocked) {
-                        curPos.setY(curPos.getY() + 1);
-                        curDirection = Direction.RIGHT;
-                    } else if (!isDownBlocked) {
-                        curPos.setX(curPos.getX() - 1);
-                        curDirection = Direction.DOWN;
-                    } else if (!isUpBlocked) {
+                if (enemyIsRight) {
+                    if (!isRightBlocked && !lastMoveRight) {
                         curPos.setX(curPos.getX() + 1);
-                        curDirection = Direction.UP;
-                    } else {
+                        curDirection = Direction.RIGHT;
+                        lastDirection = Direction.RIGHT;
+                    } else if (!isDownBlocked && !lastMoveDown) {
                         curPos.setY(curPos.getY() - 1);
+                        curDirection = Direction.DOWN;
+                        lastDirection = Direction.DOWN;
+                    } else if (!isUpBlocked && !lastMoveUp) {
+                        curPos.setY(curPos.getY() + 1);
+                        curDirection = Direction.UP;
+                        lastDirection = Direction.UP;
+                    } else {
+                        curPos.setX(curPos.getX() - 1);
                         curDirection = Direction.LEFT;
+                        lastDirection = Direction.LEFT;
                     }
                 } else {
-                    if (!isLeftBlocked) {
-                        curPos.setY(curPos.getY() - 1);
-                        curDirection = Direction.LEFT;
-                    } else if (!isUpBlocked) {
-                        curPos.setX(curPos.getX() + 1);
-                        curDirection = Direction.UP;
-                    } else if (!isDownBlocked) {
+                    if (!isLeftBlocked && !lastMoveLeft) {
                         curPos.setX(curPos.getX() - 1);
-                        curDirection = Direction.DOWN;
-                    } else {
+                        curDirection = Direction.LEFT;
+                        lastDirection = Direction.LEFT;
+                    } else if (!isUpBlocked && !lastMoveUp) {
                         curPos.setY(curPos.getY() + 1);
+                        curDirection = Direction.UP;
+                        lastDirection = Direction.UP;
+                    } else if (!isDownBlocked && !lastMoveDown) {
+                        curPos.setY(curPos.getY() - 1);
+                        curDirection = Direction.DOWN;
+                        lastDirection = Direction.DOWN;
+                    } else {
+                        curPos.setX(curPos.getX() + 1);
                         curDirection = Direction.RIGHT;
+                        lastDirection = Direction.RIGHT;
                     }
                 }
             } else {
-                if (enemyPosY > curPos.getY()) {
-                    if (!isUpBlocked) {
-                        curPos.setX(curPos.getX() + 1);
-                        curDirection = Direction.UP;
-                    } else if (!isLeftBlocked) {
-                        curPos.setY(curPos.getY() - 1);
-                        curDirection = Direction.LEFT;
-                    } else if (!isRightBlocked) {
+                if (enemyIsUp) {
+                    if (!isUpBlocked && !lastMoveUp) {
                         curPos.setY(curPos.getY() + 1);
-                        curDirection = Direction.RIGHT;
-                    } else {
+                        curDirection = Direction.UP;
+                        lastDirection = Direction.UP;
+                    } else if (!isLeftBlocked && !lastMoveLeft) {
                         curPos.setX(curPos.getX() - 1);
+                        curDirection = Direction.LEFT;
+                        lastDirection = Direction.LEFT;
+                    } else if (!isRightBlocked && !lastMoveRight) {
+                        curPos.setX(curPos.getX() + 1);
+                        curDirection = Direction.RIGHT;
+                        lastDirection = Direction.RIGHT;
+                    } else {
+                        curPos.setY(curPos.getY() - 1);
                         curDirection = Direction.DOWN;
+                        lastDirection = Direction.DOWN;
                     }
                 } else {
-                    if (!isDownBlocked) {
-                        curPos.setX(curPos.getX() - 1);
-                        curDirection = Direction.DOWN;
-                    } else if (!isLeftBlocked) {
+                    if (!isDownBlocked && lastDirection != Direction.DOWN) {
                         curPos.setY(curPos.getY() - 1);
+                        curDirection = Direction.DOWN;
+                        lastDirection = Direction.DOWN;
+                    } else if (!isLeftBlocked && lastDirection != Direction.LEFT) {
+                        curPos.setX(curPos.getX() - 1);
                         curDirection = Direction.LEFT;
-                    } else if (!isRightBlocked) {
-                        curPos.setY(curPos.getY() + 1);
-                        curDirection = Direction.RIGHT;
-                    } else {
+                        lastDirection = Direction.LEFT;
+                    } else if (!isRightBlocked && lastDirection != Direction.RIGHT) {
                         curPos.setX(curPos.getX() + 1);
+                        curDirection = Direction.RIGHT;
+                        lastDirection = Direction.RIGHT;
+                    } else {
+                        curPos.setY(curPos.getY() + 1);
                         curDirection = Direction.UP;
+                        lastDirection = Direction.UP;
                     }
                 }
             }

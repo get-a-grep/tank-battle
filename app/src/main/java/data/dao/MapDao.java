@@ -22,7 +22,7 @@ public class MapDao {
 
         BasicDBObject query = new BasicDBObject();
         query.put("id", id);
-        DBObject mapObj = mapCollection.findOne();
+        DBObject mapObj = mapCollection.findOne(query);
 
         if(mapObj != null) {
             Map map = DBObjConverter.mapFromDbObj(mapObj);
