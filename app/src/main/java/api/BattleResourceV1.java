@@ -14,6 +14,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ * Resource class for tank-battle v1
+ *
+ * @author seanm
+ */
 @Path("/v1")
 @Api(value = "Battle API V1")
 public class BattleResourceV1 {

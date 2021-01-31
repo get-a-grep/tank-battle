@@ -11,9 +11,24 @@ import org.apache.log4j.Logger;
 
 import java.util.UUID;
 
+/**
+ * Data access object that stores and retrieves Games in/from the 'games' collection.
+ *
+ * @author mads
+ */
 public class GameDao {
     private static final Logger LOGGER = Logger.getLogger(GameDao.class);
 
+    /**
+     * Stores BattleParams and a Score from a finished game as a 'game' db-object.
+     *
+     * @param battleParams
+     *  The parameters of the battle that was fought
+     * @param score
+     *  The score of the battle that was fought
+     * @return
+     *  The unique ID of the game that was stored in the DB;
+     */
     public String storeGameSession(BattleParams battleParams, Score score) {
         //Retrieve configured connection
         ConnectionHelper connHelper = new ConnectionHelper();
@@ -41,6 +56,14 @@ public class GameDao {
         return id;
     }
 
+    /**
+     * Retrieves a finished game for the given ID.
+     *
+     * @param gameId
+     *  The gameId to be searched for
+     * @return
+     *  A Game model object.
+     */
     public Game getGameForId(String gameId) {
         //Retrieve configured connection
         ConnectionHelper connHelper = new ConnectionHelper();

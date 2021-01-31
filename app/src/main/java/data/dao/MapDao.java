@@ -6,9 +6,22 @@ import data.ConnectionHelper;
 import data.converter.DBObjConverter;
 import org.apache.log4j.Logger;
 
+/**
+ * Data access object that stores and retrieves Maps in/from the 'map' collection.
+ *
+ * @author mads
+ */
 public class MapDao {
     private static final Logger LOGGER = Logger.getLogger(MapDao.class);
 
+    /**
+     * Retrieves a map for a given id
+     *
+     * @param id
+     *  the id to be searched for
+     * @return
+     *  the Map model object
+     */
     public Map getMapForId(final String id) {
         //Retrieve configured connection
         ConnectionHelper connHelper = new ConnectionHelper();

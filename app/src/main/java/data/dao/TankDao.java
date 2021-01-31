@@ -6,9 +6,22 @@ import data.ConnectionHelper;
 import data.converter.DBObjConverter;
 import org.apache.log4j.Logger;
 
+/**
+ * Data access object that stores and retrieves Tanks in/from the 'tank' collection.
+ *
+ * @author mads
+ */
 public class TankDao {
     Logger LOGGER = Logger.getLogger(TankDao.class);
 
+    /**
+     * Retrieves a Tank from the db for a given id.
+     *
+     * @param id
+     *  The ID to be searched for.
+     * @return
+     *  The Tank model object.
+     */
     public Tank getTankForId(final String id) {
         //Retrieve configured connection
         ConnectionHelper connHelper = new ConnectionHelper();

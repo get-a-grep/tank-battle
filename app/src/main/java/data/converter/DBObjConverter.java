@@ -11,7 +11,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
-
+/**
+ * Helper class to convert Objects received from the DB into model objects that can
+ * be returned to the client.
+ *
+ * @author seanm
+ */
 public class DBObjConverter {
     private static final Logger LOGGER = Logger.getLogger(DBObjConverter.class);
 

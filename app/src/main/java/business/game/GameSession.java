@@ -7,6 +7,12 @@ import data.dao.GameDao;
 import data.dao.TankDao;
 import org.apache.log4j.Logger;
 
+/**
+ * Class that plays a single game and stores that information in the MongoDB instance.
+ * This class should only contain logic pertaining to gameplay and how a game is run.
+ *
+ * @author seanm
+ */
 public class GameSession {
     private static final Logger LOGGER = Logger.getLogger(GameSession.class);
 

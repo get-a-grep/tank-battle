@@ -9,6 +9,12 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 
+/**
+ * The class containing the instance of a tank that is defined by a given schema.
+ * Also contains all decision logic for movement, attacking, and turning.
+ *
+ * @author seanm
+ */
 @Data
 public class TankAi {
     private static final Logger LOGGER = Logger.getLogger(TankAi.class);
@@ -20,6 +26,11 @@ public class TankAi {
     private Direction curDirection;
     private Direction lastDirection;
 
+    /**
+     * Constructor that sets health based on tank-schema on startup.
+     *
+     * @param tank the tank-schema
+     */
     public TankAi (Tank tank) {
         this.tankDef = tank;
         curHealth = tank.getHealth();
@@ -29,7 +40,9 @@ public class TankAi {
      * Method that decides whether the AI should move, turn, or attack.
      *
      * @param map
+     *  the MapInstance that is being played on
      * @param enemyTank
+     *  the enemy tank that is being played against
      */
     public void doAction(MapInstance map, TankAi enemyTank) {
         ArrayList<Obstacle> obstacles = map.getObstacles();
@@ -40,6 +53,7 @@ public class TankAi {
         boolean enemyOnX = enemyPos.getX() == curPos.getX();
         boolean enemyOnY = enemyPos.getY() == curPos.getY();
 
+        //Find if our Line of Sight to the enemy tank is clear
         boolean clearLOS = false;
         for (Obstacle obstacle : obstacles) {
             int obstacleX = obstacle.getPosition().getX();
@@ -87,6 +101,8 @@ public class TankAi {
             }
         }
 
+        // If the Line of Sight is clear and we are facing the enemy,
+        // attack. Else turn to face enemy or move towards them
         if (clearLOS && isFacingEnemy(enemyPos)) {
             attack(enemyTank);
         } else if (clearLOS && !isFacingEnemy(enemyPos)) {
@@ -96,6 +112,14 @@ public class TankAi {
         }
     }
 
+    /**
+     * Decide whether this tank is facing the enemy tank
+     *
+     * @param enemyTank
+     *  position of the enemy tank
+     * @return
+     *  true if facing the enemy tank
+     */
     private boolean isFacingEnemy(Position enemyTank) {
         int enemyPosX = enemyTank.getX();
         int enemyPosY = enemyTank.getY();
@@ -117,6 +141,15 @@ public class TankAi {
         }
     }
 
+    /**
+     * Search the surrounding grids and return the direction of any blocking
+     * obstacles. If there are none, return null, this will be handled above.
+     *
+     * @param obstacle
+     *  the obstacle to be checked
+     * @return
+     *  a direction if it is blocking, null if not
+     */
     private Direction findBlock(Obstacle obstacle) {
         int obsX = obstacle.getPosition().getX();
         int obsY = obstacle.getPosition().getY();
@@ -142,6 +175,12 @@ public class TankAi {
         }
     }
 
+    /**
+     * Turns the tank in the case that we aren't facing the enemy.
+     *
+     * @param enemyPos
+     *  The position of the enemy tank
+     */
     private void doTurn(Position enemyPos) {
         if (enemyPos.getX() == curPos.getX()) {
             if (enemyPos.getY() > curPos.getY()) {
@@ -160,6 +199,15 @@ public class TankAi {
                 curPos.toString());
     }
 
+    /**
+     * Method containing decision logic on how to move based on where the enemy is,
+     * where this tank moved last, and if there are any obstacles around.
+     *
+     * @param enemyPos
+     *  The position of the enemy tank
+     * @param blocking
+     *  A list of directions that are blocked due to obstacles.
+     */
     private void move(Position enemyPos, ArrayList<Direction> blocking) {
         int enemyPosX = enemyPos.getX();
         int enemyPosY = enemyPos.getY();
@@ -179,6 +227,7 @@ public class TankAi {
         int diffPosY = enemyPosY > curPos.getY() ? enemyPosY - curPos.getY() :
                 curPos.getY() - enemyPosY;
 
+        //there are no obstacles around us
         if (blocking.size() == 0) {
             if (diffPosX > diffPosY) {
                 if (enemyIsLeft && !lastMoveRight) {
@@ -229,6 +278,7 @@ public class TankAi {
                     }
                 }
             }
+        //there are obstacles around us
         } else {
             boolean isLeftBlocked = false;
             boolean isRightBlocked = false;
@@ -333,6 +383,12 @@ public class TankAi {
         LOGGER.info(tankDef.getName() + " moved to " + curPos.toString());
     }
 
+    /**
+     * Method to attack the enemy tank by lowering its curHealth by 1;
+     *
+     * @param tankAi
+     *  the tank to be attacked.
+     */
     private void attack(TankAi tankAi) {
         tankAi.setCurHealth(tankAi.getCurHealth() - 1);
         LOGGER.info(tankDef.getName() + " hit " + tankAi.getTankDef().getName() +
