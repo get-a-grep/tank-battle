@@ -70,5 +70,6 @@ method `v1/simulate` and must be used in the `v1/score/{game_id}` method.
 ## License Information
 This application runs under a GPL 3 license that is included with the code.
 If this code is run and distributed however, note that the SSPL for MongoDB 
-has recently been approved. For more information, visit 
-[Open Source Initiative](https://opensource.org/node/1099).
+has it's own specific restrictions for redistribution as 3rd party software. 
+For more information, visit 
+[SSPL - Wikipedia](https://en.wikipedia.org/wiki/Server_Side_Public_License).

@@ -6,7 +6,7 @@ import javax.ws.rs.core.Application;
 /**
  * Basic Application class for JAX-RS Web-Service
  *
- * @author seanm
+ * @author mads
  */
 @ApplicationPath("/api")
 public class BattleApplication extends Application {

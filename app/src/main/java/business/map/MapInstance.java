@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * The instance of a map to be played on. Currently a WIP as it will only have a use after
  * implementation of generateMap().
  *
- * @author seanm
+ * @author mads
  */
 @Data
 public class MapInstance {

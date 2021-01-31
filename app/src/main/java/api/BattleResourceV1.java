@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 /**
  * Resource class for tank-battle v1
  *
- * @author seanm
+ * @author mads
  */
 @Path("/v1")
 @Api(value = "Battle API V1")

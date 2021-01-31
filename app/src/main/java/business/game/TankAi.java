@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * The class containing the instance of a tank that is defined by a given schema.
  * Also contains all decision logic for movement, attacking, and turning.
  *
- * @author seanm
+ * @author mads
  */
 @Data
 public class TankAi {

@@ -15,7 +15,7 @@ import java.util.Set;
  * Helper class to convert Objects received from the DB into model objects that can
  * be returned to the client.
  *
- * @author seanm
+ * @author mads
  */
 public class DBObjConverter {
     private static final Logger LOGGER = Logger.getLogger(DBObjConverter.class);
