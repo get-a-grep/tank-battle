@@ -23,14 +23,27 @@ public class GameSession {
         setupSession(battleParams);
 
         //Play game
+        int turn = 0;
         while (tank1.getCurHealth() > 0 && tank2.getCurHealth() > 0) {
             doTurn();
+            turn++;
+            LOGGER.info("Tank 1 health: " + tank1.getCurHealth() +
+                    " Tank 2 health: " + tank2.getCurHealth() + " on turn " + turn);
         }
 
         //Set score
         Score score = new Score();
-        score.setTank1Points(5 - tank2.getCurHealth());
-        score.setTank2Points(5 - tank1.getCurHealth());
+        score.setTank1Points(tank1.getCurHealth());
+        score.setTank2Points(tank2.getCurHealth());
+
+        //Set winner
+        if (tank1.getCurHealth() > tank2.getCurHealth()) {
+            score.setWinner(tank1.getTankDef().getName());
+        } else if (tank2.getCurHealth() > tank1.getCurHealth()) {
+            score.setWinner(tank2.getTankDef().getName());
+        } else {
+            score.setWinner("TIE");
+        }
 
         //Store game
         GameDao gameDao = new GameDao();
@@ -62,6 +75,12 @@ public class GameSession {
 
     private void doTurn() {
         tank1.doAction(map, tank2);
-        tank2.doAction(map, tank1);
+
+        if (tank2.getCurHealth() == 0) {
+            return;
+        } else {
+            tank2.doAction(map, tank1);
+        }
+
     }
 }

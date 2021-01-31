@@ -1,9 +1,6 @@
 package api;
 
-import api.model.BattleParams;
-import api.model.Game;
-import api.model.Map;
-import api.model.Tank;
+import api.model.*;
 import business.game.GameSession;
 import com.google.gson.Gson;
 import data.dao.GameDao;
@@ -61,7 +58,7 @@ public class BattleResourceV1 {
     @Path("/score/{game_id}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Returns a score from the DB for a given gameId.",
-            response = String.class)
+            response = Score.class)
     public Response getScore(@PathParam("game_id") String gameId) {
         Gson gson = new Gson();
         GameDao gameDao = new GameDao();

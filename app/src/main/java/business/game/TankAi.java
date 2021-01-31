@@ -40,20 +40,46 @@ public class TankAi {
         boolean enemyOnX = enemyPos.getX() == curPos.getX();
         boolean enemyOnY = enemyPos.getY() == curPos.getY();
 
-        boolean clearLOS = true;
+        boolean clearLOS = false;
         for (Obstacle obstacle : obstacles) {
-            if (enemyOnX) {
-                if (obstacle.getPosition().getX() == curPos.getX() && obstacle.isBlocksMove()) {
-                    clearLOS = false;
+            int obstacleX = obstacle.getPosition().getX();
+            int obstacleY = obstacle.getPosition().getY();
+
+            boolean obstacleOnX = obstacleX == curPos.getX();
+            boolean obstacleOnY = obstacleY == curPos.getY();
+
+            if (enemyOnX && obstacleOnX) {
+                if (enemyPos.getX() > curPos.getX()) {
+                    if (obstacleX < curPos.getX()) {
+                        clearLOS = true;
+                    } else if (obstacleX > curPos.getX() && !obstacle.isBlocksMove()) {
+                        clearLOS = true;
+                    }
                 } else {
-                    continue;
+                    if (obstacleX > curPos.getX()) {
+                        clearLOS = true;
+                    } else if (obstacleX < curPos.getX() && !obstacle.isBlocksMove()) {
+                        clearLOS = true;
+                    }
                 }
-            } else if (enemyOnY) {
-                if (obstacle.getPosition().getY() == curPos.getY() && obstacle.isBlocksMove()) {
-                    clearLOS = false;
+            } else if (enemyOnX && !obstacleOnX) {
+                clearLOS = true;
+            } else if (enemyOnY && obstacleOnY) {
+                if (enemyPos.getY() > curPos.getY()) {
+                    if (obstacleY < curPos.getY()) {
+                        clearLOS = true;
+                    } else if (obstacleY > curPos.getY() && !obstacle.isBlocksMove()) {
+                        clearLOS = true;
+                    }
                 } else {
-                    continue;
+                    if (obstacleY > curPos.getY()) {
+                        clearLOS = true;
+                    } else if (obstacleY < curPos.getY() && !obstacle.isBlocksMove()) {
+                        clearLOS = true;
+                    }
                 }
+            } else if (enemyOnY && !obstacleOnY) {
+                clearLOS = true;
             }
             Direction block = findBlock(obstacle);
             if (block != null) {
@@ -78,13 +104,13 @@ public class TankAi {
         boolean enemyOnY = enemyPosY == curPos.getY();
 
 
-        if (enemyOnX && curDirection == Direction.RIGHT && enemyPosX > curPos.getX()) {
+        if (enemyOnY && curDirection == Direction.RIGHT && enemyPosX > curPos.getX()) {
             return true;
-        } else if (enemyOnX && curDirection == Direction.LEFT && enemyPosX < curPos.getX()) {
+        } else if (enemyOnY && curDirection == Direction.LEFT && enemyPosX < curPos.getX()) {
             return true;
-        } else if (enemyOnY && curDirection == Direction.UP && enemyPosY > curPos.getY()) {
+        } else if (enemyOnX && curDirection == Direction.UP && enemyPosY > curPos.getY()) {
             return true;
-        } else if (enemyOnY && curDirection == Direction.DOWN && enemyPosY < curPos.getY()) {
+        } else if (enemyOnX && curDirection == Direction.DOWN && enemyPosY < curPos.getY()) {
             return true;
         } else {
             return false;
@@ -117,7 +143,7 @@ public class TankAi {
     }
 
     private void doTurn(Position enemyPos) {
-        if(enemyPos.getX() == curPos.getX()) {
+        if (enemyPos.getX() == curPos.getX()) {
             if (enemyPos.getY() > curPos.getY()) {
                 curDirection = Direction.UP;
             } else {
@@ -130,7 +156,8 @@ public class TankAi {
                 curDirection = Direction.LEFT;
             }
         }
-        LOGGER.info(tankDef.getName() + " turned " + curDirection.name());
+        LOGGER.info(tankDef.getName() + " turned " + curDirection.name() + "on Position " +
+                curPos.toString());
     }
 
     private void move(Position enemyPos, ArrayList<Direction> blocking) {
@@ -307,12 +334,8 @@ public class TankAi {
     }
 
     private void attack(TankAi tankAi) {
-        tankAi.takeDamage();
+        tankAi.setCurHealth(tankAi.getCurHealth() - 1);
         LOGGER.info(tankDef.getName() + " hit " + tankAi.getTankDef().getName() +
                 " for 1 damage.");
-    }
-
-    private void takeDamage() {
-        curHealth--;
     }
 }

@@ -9,6 +9,8 @@ import data.ConnectionHelper;
 import data.converter.DBObjConverter;
 import org.apache.log4j.Logger;
 
+import java.util.UUID;
+
 public class GameDao {
     private static final Logger LOGGER = Logger.getLogger(GameDao.class);
 
@@ -23,15 +25,20 @@ public class GameDao {
         //Retrieve collection
         DBCollection gameCollection = mongoDB.getCollection("games");
 
+        //Generate unique ID for game
+        String id = UUID.randomUUID().toString();
+
         BasicDBObject game = new BasicDBObject();
+        game.append("id", id);
         game.append("tankIds", battleParams.getTankIds());
         game.append("mapId", battleParams.getMapId());
-        game.append("score", score);
+        game.append("scoreT1", score.getTank1Points());
+        game.append("scoreT2", score.getTank2Points());
+        game.append("winner", score.getWinner());
 
-        WriteResult writeResult = gameCollection.insert(game);
-        String newId = writeResult.getUpsertedId().toString();
+        gameCollection.insert(game);
 
-        return newId;
+        return id;
     }
 
     public Game getGameForId(String gameId) {
@@ -46,7 +53,7 @@ public class GameDao {
         DBCollection gameCollection = mongoDB.getCollection("games");
 
         BasicDBObject query = new BasicDBObject();
-        query.put("_id", gameId);
+        query.put("id", gameId);
         DBObject gameObj = gameCollection.findOne();
 
         if(gameObj != null) {

@@ -6,11 +6,9 @@ import api.model.Position;
 import data.dao.MapDao;
 import lombok.Data;
 
-import javax.ejb.Stateful;
 import java.util.ArrayList;
 
 @Data
-@Stateful
 public class MapInstance {
     private String id;
 

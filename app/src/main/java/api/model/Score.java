@@ -6,4 +6,5 @@ import lombok.Data;
 public class Score {
     private int tank1Points;
     private int tank2Points;
+    private String winner;
 }

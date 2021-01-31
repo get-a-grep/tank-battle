@@ -82,17 +82,20 @@ public class DBObjConverter {
         }
 
         Game game = new Game();
-        game.setId(fields.get("_id"));
+        game.setId(fields.get("id"));
 
         try {
-            BattleParams params =new BattleParams();
+            BattleParams params = new BattleParams();
             ObjectMapper mapper = new ObjectMapper();
 
             ArrayList<String> tankIds = mapper.readValue(fields.get("tankIds"), ArrayList.class);
             params.setTankIds(tankIds);
             params.setMapId(fields.get("mapId"));
 
-            Score score = mapper.readValue(fields.get("score"), Score.class);
+            Score score = new Score();
+            score.setTank1Points((int)Float.parseFloat(fields.get("scoreT1")));
+            score.setTank2Points((int)Float.parseFloat(fields.get("scoreT2")));
+            score.setWinner(fields.get("winner"));
 
             game.setBattleParams(params);
             game.setScore(score);
