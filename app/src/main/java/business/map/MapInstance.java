@@ -45,6 +45,7 @@ public class MapInstance {
         if (difficulty == null) {
             difficulty = Difficulty.NORMAL;
         }
+        mapDao = new MapDao();
 
         fieldX = difficulty.getMaxX();
         fieldY = difficulty.getMaxY();
