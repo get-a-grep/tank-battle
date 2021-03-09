@@ -34,26 +34,27 @@ public class GameDao {
         ConnectionHelper connHelper = new ConnectionHelper();
 
         //Connect to DB
-        MongoClient mongoClient = new MongoClient(connHelper.getMongoUri());
-        DB mongoDB = mongoClient.getDB("tb-test");
+        try(MongoClient mongoClient = new MongoClient(connHelper.getMongoUri())) {
+            DB mongoDB = mongoClient.getDB("tb-test");
 
-        //Retrieve collection
-        DBCollection gameCollection = mongoDB.getCollection("games");
+            //Retrieve collection
+            DBCollection gameCollection = mongoDB.getCollection("games");
 
-        //Generate unique ID for game
-        String id = UUID.randomUUID().toString();
+            //Generate unique ID for game
+            String id = UUID.randomUUID().toString();
 
-        BasicDBObject game = new BasicDBObject();
-        game.append("id", id);
-        game.append("tankIds", battleParams.getTankIds());
-        game.append("mapId", battleParams.getMapId());
-        game.append("scoreT1", score.getTank1Points());
-        game.append("scoreT2", score.getTank2Points());
-        game.append("winner", score.getWinner());
+            BasicDBObject game = new BasicDBObject();
+            game.append("id", id);
+            game.append("tankIds", battleParams.getTankIds());
+            game.append("mapId", battleParams.getMapId());
+            game.append("scoreT1", score.getTank1Points());
+            game.append("scoreT2", score.getTank2Points());
+            game.append("winner", score.getWinner());
 
-        gameCollection.insert(game);
+            gameCollection.insert(game);
 
-        return id;
+            return id;
+        }
     }
 
     /**
@@ -69,22 +70,23 @@ public class GameDao {
         ConnectionHelper connHelper = new ConnectionHelper();
 
         //Connect to DB
-        MongoClient mongoClient = new MongoClient(connHelper.getMongoUri());
-        DB mongoDB = mongoClient.getDB("tb-test");
+        try(MongoClient mongoClient = new MongoClient(connHelper.getMongoUri())){
+            DB mongoDB = mongoClient.getDB("tb-test");
 
-        //Retrieve collection
-        DBCollection gameCollection = mongoDB.getCollection("games");
+            //Retrieve collection
+            DBCollection gameCollection = mongoDB.getCollection("games");
 
-        BasicDBObject query = new BasicDBObject();
-        query.put("id", gameId);
-        DBObject gameObj = gameCollection.findOne();
+            BasicDBObject query = new BasicDBObject();
+            query.put("id", gameId);
+            DBObject gameObj = gameCollection.findOne();
 
-        if(gameObj != null) {
-            Game game = DBObjConverter.gameFromDbObj(gameObj);
-            LOGGER.info("Returning following game for id: " + gameObj.toString());
-            return game;
-        } else {
-            return null;
+            if(gameObj != null) {
+                Game game = DBObjConverter.gameFromDbObj(gameObj);
+                LOGGER.info("Returning following game for id: " + gameObj.toString());
+                return game;
+            } else {
+                return null;
+            }
         }
     }
 }

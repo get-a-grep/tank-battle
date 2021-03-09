@@ -59,6 +59,20 @@ public class BattleResourceV1 {
         return Response.ok().entity(gson.toJson(gameId)).build();
     }
 
+    @POST
+    @Path("/simulate/gen-map")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Simulates a battle, generates a random map and returns a game_id for use in the score IF.",
+            response = String.class)
+    public Response simulateBattleWithMapGen(
+            @ApiParam(value = "The parameters of the battle", required = true) BattleParams params) {
+        Gson gson = new Gson();
+        GameSession gameSession = new GameSession();
+        String gameId = gameSession.playSession(params);
+        return Response.ok().entity(gson.toJson(gameId)).build();
+    }
+
     @GET
     @Path("/score/{game_id}")
     @Produces(MediaType.APPLICATION_JSON)

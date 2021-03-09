@@ -61,6 +61,14 @@ public class GameSession {
     private void setupSession(BattleParams battleParams) {
         mapId = battleParams.getMapId();
 
+        map = new MapInstance();
+
+        if (mapId == null || mapId.isEmpty()) {
+            map = map.generateMap(battleParams.getDifficulty());
+        } else {
+            map = map.loadMap(mapId);
+        }
+
         if (battleParams.getTankIds().size() != 2) {
             LOGGER.error("Interface only supports 2 tanks. Tanks given: " + battleParams.getTankIds().size());
             System.exit(1);
@@ -71,9 +79,6 @@ public class GameSession {
         TankDao tankDao = new TankDao();
         tank1 = new TankAi(tankDao.getTankForId(tankId1));
         tank2 = new TankAi(tankDao.getTankForId(tankId2));
-
-        map = new MapInstance();
-        map = map.loadMap(mapId);
 
         tank1.setCurPos(map.getStartPointA());
         tank2.setCurPos(map.getStartPointB());
