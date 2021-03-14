@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 
 /**
  * A helper class to establish a connection to the MongoDB container.
- * 
+ *
  * @author mads
  */
 public class ConnectionHelper {
