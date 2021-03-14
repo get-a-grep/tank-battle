@@ -40,19 +40,16 @@ a preference thing):
 After that, navigate to the following address to use the Swagger UI:
 http://localhost:8080/app/swagger-ui/index.html
 
-## Current Version Information (*V1.0*)
-The current version only supports one map `mapId : "1"` and two tanks
-`tankId : [ "1", "2" ]`. The Game ID is returned as a UUID for the POST 
+## Current Version Information (*V1.1*)
+The current version only supports selecting the map or leaving the field 
+blank for generation and two tanks `tankId : [ "1", "2" ]`. The Game ID is returned as a UUID for the POST 
 method `v1/simulate` and must be used in the `v1/score/{game_id}` method.
 
 ### Ideas for future versions
 * Map
 
-   * Generate map for session
    * Integrate damage for landmines (on treads) and decision logic 
      for AI
-   * Add in difficulty level based on # of obstacles generated on 
-     map
     
 * Tank
 
